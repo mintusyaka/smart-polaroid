@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#define LED_PIN RGB_BUILTIN   // вбудований адресний LED плати
+#define LED_PIN 38   // вбудований адресний LED плати
 
 void setup() {
   Serial.begin(115200);
