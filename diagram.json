@@ -16,6 +16,13 @@
       "top": -80,
       "left": 150,
       "attrs": { "i2cAddress": "0x3c" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": 100,
+      "left": 150,
+      "attrs": { "color": "blue" }
     }
   ],
   "connections": [
@@ -24,6 +31,8 @@
     ["esp32:8", "oled1:SDA", "green", []],
     ["esp32:9", "oled1:SCL", "yellow", []],
     ["esp32:3V3", "oled1:VCC", "red", []],
-    ["esp32:GND.1", "oled1:GND", "black", []]
+    ["esp32:GND.1", "oled1:GND", "black", []],
+    ["esp32:4", "btn1:1.l", "orange", []],
+    ["btn1:2.l", "esp32:GND.1", "black", []]
   ]
 }

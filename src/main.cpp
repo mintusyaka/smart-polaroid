@@ -11,8 +11,21 @@
 #define SCREEN_HEIGHT 64
 #define OLED_ADDR 0x3C
 
+#define BUTTON_PIN 4
+#define DEBOUNCE_MS 50
+
+#define LED_BLINK_MS 500
+
 const char* WIFI_SSID = "Wokwi-GUEST";
 const char* WIFI_PASS = "";
+
+bool lastRawReading = HIGH;   // сире значення піна з попередньої ітерації — лише для виявлення дребезгу
+bool buttonState = HIGH;      // підтверджений стан ПІСЛЯ антидребезгу — саме він порівнюється для лічильника
+unsigned long lastDebounceTime = 0;
+int pressCount = 0;
+
+bool ledOn = false;
+unsigned long lastLedToggle = 0;
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
@@ -47,9 +60,45 @@ void initOLED() {
   }
 }
 
+void checkButton() {
+  bool reading = digitalRead(BUTTON_PIN);
+
+  if (reading != lastRawReading) {
+    lastDebounceTime = millis();
+  }
+
+  if ((millis() - lastDebounceTime) > DEBOUNCE_MS) {
+    if (reading != buttonState) {
+      buttonState = reading;
+      if (buttonState == LOW) {
+        pressCount++;
+        Serial.print("Button pressed. Count=");
+        Serial.println(pressCount);
+        showText("Button: " + String(pressCount));
+      }
+    }
+  }
+
+  lastRawReading = reading;
+}
+
+void updateLed() {
+  if (millis() - lastLedToggle >= LED_BLINK_MS) {
+    lastLedToggle = millis();
+    ledOn = !ledOn;
+    if (ledOn) {
+      neopixelWrite(LED_PIN, 20, 0, 0);
+    } else {
+      neopixelWrite(LED_PIN, 0, 0, 0);
+    }
+  }
+}
+
 void setup() {
   Serial.begin(115200);
   Serial.println("Boot OK");
+
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   initOLED();
 
@@ -58,9 +107,9 @@ void setup() {
   showText("WiFi Connected\nIP: " + WiFi.localIP().toString());
 }
 
+
 void loop() {
-  neopixelWrite(LED_PIN, 20, 0, 0);
-  delay(500);
-  neopixelWrite(LED_PIN, 0, 0, 0);
-  delay(500);
+  checkButton();
+
+  updateLed();
 }
