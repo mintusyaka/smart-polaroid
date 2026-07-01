@@ -9,10 +9,21 @@
       "top": 0,
       "left": 0,
       "attrs": {}
+    },
+    {
+      "type": "board-ssd1306",
+      "id": "oled1",
+      "top": -80,
+      "left": 150,
+      "attrs": { "i2cAddress": "0x3c" }
     }
   ],
   "connections": [
     ["esp32:TX", "$serialMonitor:RX", "", []],
-    ["esp32:RX", "$serialMonitor:TX", "", []]
+    ["esp32:RX", "$serialMonitor:TX", "", []],
+    ["esp32:8", "oled1:SDA", "green", []],
+    ["esp32:9", "oled1:SCL", "yellow", []],
+    ["esp32:3V3", "oled1:VCC", "red", []],
+    ["esp32:GND.1", "oled1:GND", "black", []]
   ]
 }
