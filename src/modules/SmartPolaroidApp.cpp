@@ -1,9 +1,9 @@
 #include "SmartPolaroidApp.hpp"
 
-SmartPolaroidApp::SmartPolaroidApp() : display_(), wifi_(), button_(), led_() {}
+SmartPolaroidApp::SmartPolaroidApp() : display_(), wifi_(), button_(), led_(), telegramBot_(BOT_TOKEN, CHAT_ID, display_) {}
 
-SmartPolaroidApp::SmartPolaroidApp(const uint8_t buttonPin, const uint8_t ledPin)
-    : display_(), wifi_(), button_(), led_(), buttonPin_(buttonPin), ledPin_(ledPin) {}
+SmartPolaroidApp::SmartPolaroidApp(const uint8_t buttonPin, const uint8_t ledPin, const String& botToken, const String& chatId)
+    : display_(), wifi_(), button_(), led_(), buttonPin_(buttonPin), ledPin_(ledPin), telegramBot_(botToken, chatId, display_) {}
 
 void SmartPolaroidApp::setup() {
   display_.begin();
@@ -15,6 +15,8 @@ void SmartPolaroidApp::setup() {
     delay(100);
   }
   display_.showText("Smart Polaroid App\nIP: " + wifi_.getIp());
+
+  telegramBot_.begin();  
 }
 
 void SmartPolaroidApp::loop() {
@@ -26,4 +28,6 @@ void SmartPolaroidApp::loop() {
     display_.showText("Button Pressed!\nCount: " + String(buttonPressedCount_));
     button_.resetPressedFlag();
   }
+
+  telegramBot_.checkForNewMessages();
 }
